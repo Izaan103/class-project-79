@@ -1,0 +1,478 @@
+<head>
+    <title> Lou's Woodfire Pizza </title>
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <script src ="https://code.jquery.com/jquery-git.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/slate/bootstrap.min.css">
+    
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+    <!-- Angular Material style sheet -->
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/4.1.5/firebase.js"></script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/2.3.0/firebaseui.js"></script>
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.3.0/firebaseui.css" >
+    <link rel="stylesheet" href="public/style.css">
+    
+    <!-- Angular -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+
+<!-- AngularFire -->
+<script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+    
+</head>
+
+<body ng-app="pizzApp">
+    
+    <nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="index.html">Lou's Wood<span class="glyphicon glyphicon-fire"></span> Pizza</a>
+    </div>
+    
+    <form class="navbar-form navbar-left">
+      <div class="input-group" ng-controller="SearchFood">
+        <input type="text" class="form-control" placeholder="Search" ng-model="food">
+        <div class="input-group-btn">
+          <button class="btn btn-default" type="submit" ng-click="search(food)">
+            <i class="glyphicon glyphicon-search"></i>
+          </button>
+        </div>
+      </div>
+    </form> 
+      
+      <ul class="nav navbar-nav navbar-right" ng-controller="UserMenuNav">
+      <li href="#login" id="login" class="dropdown">
+          <!-- 
+          <a class="dropdown-toggle" data-toggle="dropdown" id="logName" ng-if="user.user" ng-cloak>{{user.user.name}}
+          </a>
+          <a if="logName" ng-if="!user.user" data-toggle="modal" data-target="#modalLogin">Login</a>
+          -->
+          <a if="logName"  data-toggle="modal" data-target="#modalLogin">Login</a>
+        <ul id="logged" class="dropdown-menu">
+          <li><a href="#perfil" id="perfil">Profile</a></li>
+          <li><a href="#pedidos" id="pedidos">My Orders</a></li>
+          <li class="divider"></li>
+          <li><a id="logout" href="#logout">Log out</a></li>
+        </ul>
+      </li>
+      <li><a href="#carrito" id="carrito">Cart <span class="glyphicon glyphicon-shopping-cart"></span></a></li>
+    </ul>
+  </div>
+</nav> 
+    <br>
+    <br>
+    <br>
+    <div id="greeting" class="container-full">
+        <div class="container">
+            <h1>Welcome to Lou's Woodfire Pizza</h1>
+            <br>
+            <p><a href="#menu" class="btn btn-success" id="order" type="button">Order <span class="glyphicon glyphicon-cutlery"></span></a></p>
+            
+        </div>
+    </div>
+    <div id="viewdiv"></div>
+    
+    <!-- Modal -->
+  <div class="modal fade" id="modalLogin" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="padding:35px 50px;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h2><span class="glyphicon glyphicon-lock"></span> Login</h2>
+        </div>
+        <div class="modal-body" style="padding:40px 50px;">
+          
+        <div id="firebaseui-auth-container"></div>
+        <div id="loader">Loading...</div>
+    </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger " data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+        </div>
+      </div>
+      
+    </div>
+  </div> 
+    
+<!-- <div class="container">
+<footer>
+    
+    <ul>
+        <li><a href="#">Quienes Somos</a></li>
+                <li><a href="#">Mision / Vision</a></li>
+                <li><a href="#">Contacto</a></li>
+    </ul>
+    
+    </footer>-->
+     <!-- Angular Material requires Angular.js Libraries -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+
+    
+    <!-- Angular -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+
+<!-- AngularFire -->
+<script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+
+  <!-- Angular Material Library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.1.5/firebase.js"></script>
+    <script src="/app/app.js"></script>
+    <script src="/app/auth.js"></script>
+
+    <div class='cart'id="shoppingCart">
+    <h1> My Cart</h1>
+    <ul id="items"></ul>
+</div>
+
+<div class="container" >
+    <div id="menuthumbs" class="row">
+        <div class="col-xs-6 col-md-4">
+            <a class="thumbnail" id="pizzas" >
+                <img alt="Pizzas" src="http://gastrolust.com/wp-content/uploads/2012/01/nypizza_roni_600_3769.JPG">
+                  <div class="caption">
+         <h3>Pizza / Calzone</h3>
+      </div>
+            </a>
+        </div>
+        <div  class="col-xs-6 col-md-4">
+            <a class="thumbnail" id="sandwiches" >
+                <img alt="Sandwiches" src="http://cdn.foodbeast.com/content/uploads/2014/07/INO-McGangBang-Burger.jpg">
+                       <div class="caption">
+         <h3>Sandwiches</h3>
+      </div>
+              
+            </a>
+        </div>
+        <div  class="col-xs-6 col-md-4">
+            <a class="thumbnail" id="salads">
+                <img alt="Salads" src="https://www.orwhateveryoudo.com/wp-content/uploads/2015/06/Loaded-Nachos-Supreme-6-600x400.jpg">
+                       <div class="caption">
+         <h3>Salads</h3>
+      </div>
+            </a>
+        </div>
+        
+    </div>
+    
+    <div id="menuthumbs" class="row">
+        
+        <div class="col-xs-6 col-md-4">
+            <a class="thumbnail" id="pies">
+                <img alt="Specialty Pies" src="https://www.bebeautiful.in/sites/default/files/juices-you-should-drink-after-exercise-600x400.jpg">
+                       <div class="caption">
+         <h3>Specilty Pies</h3>
+      </div>
+            </a>
+        </div>
+        
+        <div class="col-xs-6 col-md-4">
+            <a class="thumbnail" id="pasta">
+                <img alt="Pasta" src="http://gastrolust.com/wp-content/uploads/2012/01/nypizza_roni_600_3769.JPG">
+                  <div class="caption">
+                      <h3>Pasta</h3>
+      </div>
+            </a>
+        </div>
+        
+        <div class="col-xs-6 col-md-4">
+            <a class="thumbnail" id="bread">
+                <img alt="Bread" src="https://www.orwhateveryoudo.com/wp-content/uploads/2015/06/Loaded-Nachos-Supreme-6-600x400.jpg">
+                       <div class="caption">
+         <h3>Bread</h3>
+      </div>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+<script> 
+    $(document).ready(function(){
+        $("#pizzas").on('click', function(){
+            $("#viewdiv").load("/public/menuPizzas.html");
+        });
+        $("#bread").on('click', function(){
+            $("#viewdiv").load("/public/ordenar.html");
+        });
+        $("#pasta").on('click', function(){
+            $("#viewdiv").load("/public/ordenar.html");
+        });
+        $("#salads").on('click', function(){
+            $("#viewdiv").load("/public/salads.html");
+        });
+    });   
+</script>    
+
+<div class="container">
+<div class="row" id="pizzaMenu">
+  <div class="col-xs-12 col-md-4">
+    <div class="thumbnail">
+      <img src="http://gastrolust.com/wp-content/uploads/2012/01/nypizza_roni_600_3769.JPG" alt="Original Pizza">
+      <div class="caption">
+        <h3>Original Pizza</h3>
+        <p>Fresh made Marinara and Mozzarella Cheese</p>
+        <p>    
+          <div class="btn-group btn-group-justified" role="group" aria-label="...">
+          <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#toppings">Small 8"<br><span>$5.00</span></button>
+          </div>
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#toppings">Medium 12"<br> <span>$7.99</span></button>
+          </div>
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#toppings">Large 16" <br><span>$9.99</span></button>
+          </div>
+        </div>
+    </p>
+      </div>
+    </div>
+  </div>
+    
+    <div class="col-xs-12 col-md-4">
+    <div class="thumbnail">
+      <img src="http://farm4.static.flickr.com/3373/3418823260_c21cb057f9.jpg" alt="White Pizza" height="160">
+      <div class="caption">
+        <h3>White Pizza</h3>
+        <p>A base of Ricotta Cheese and Mozzarella <i>(Sauce is not included)</i></p>
+        <p>
+            <div class="btn-group btn-group-justified" role="group" aria-label="...">
+              <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#toppings">Small 8"<br><span>$6.00</span></button>
+              </div>
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#toppings">Medium 12"<br> <span>$8.99</span></button>
+              </div>
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#toppings">Large 16" <br><span>$10.99</span></button>
+              </div>
+            </div>
+        </p>
+      </div>
+    </div>
+  </div>
+    <div class="col-xs-12 col-md-4">
+    <div class="thumbnail">
+      <img src="https://veggielover75.files.wordpress.com/2012/09/vegan-calzone.jpg" alt="Calzone">
+      <div class="caption">
+        <h3>Calzone</h3>
+        <p>Includes a base of Ricotta Cheese, 3 Toppings of your choice and Mozzarella <i>(Premium Toppings not included)</i></p>
+        <p>
+            <div class="btn-group btn-group-justified" role="group" aria-label="Size">
+          <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#toppings">Small <span>$10.99</span></button>
+          </div>
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#toppings">Large <span>$12.99</span></button>
+          </div>
+        </div>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+  <div class="modal fade" id="toppings" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header toppings">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Add Toppings to your {{product}}</h4>
+        </div>
+        <div class="modal-body">
+          <div id="toppings" class="container">
+         
+        <h4>Premium</h4>
+            <form id ="premium" name="premium">
+                
+                <div class="checkbox-inline">
+                    <label><input type="checkbox" name="Shrimp"  price="4.00">Shrimp $4.00</label>
+                </div>
+                  <div class="checkbox-inline">
+                    <label><input type="checkbox" name="Anchovies" price="2.00">Anchovies $2.00</label>
+                      
+                  </div>
+                  <div class="checkbox-inline">
+                    <label><input type="checkbox" name="Chicken Breast" price="3.00">Chicken Breast $3.00</label></div>
+                
+            </form>
+        <h4>Regular</h4>
+        <form name="toppings">
+            
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Pepperoni">Pepperoni</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Meatballs">Meatballs</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Sausage">Sausage</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Ricotta Cheese">Ricotta Cheese</label>
+            </div>
+            <br>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Extra Mozzarella">Extra Mozzarella</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Ham">Ham</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Cream Cheese">Cream Cheese</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Bacon">Bacon</label>
+            </div>
+            <br>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Mushrooms">Mushrooms</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Bell Peppers">Bell Peppers</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Red Peppers">Red Peppers</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Black Olives">Black Olives</label>
+            </div>
+            <br>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Jalapenos">Jalapenos</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Spinach">Spinach</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Basil">Basil</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Sun Dried Tomatoes">Sun Dried Tomatoes</label>
+            </div>
+            <br>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Red Onions">Red Onions</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Artichoke">Artichoke</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Eggs">Eggs</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="Pineapple">Pineapple</label>
+            </div>
+        </form>
+        </div>
+        <div class="modal-footer">
+                        <p><a href="#" class="btn btn-danger" id="order" type="button"> Buy Now
+                            <span class="glyphicon glyphicon-cutlery"></span></a> <a href="#" class="btn btn-warning" id="clear" type="button"> Add to Cart
+                            <span class="glyphicon glyphicon-plus"></span></a></p>
+
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+</div>   
+
+<div class="row">
+    
+    <div class="col-xs-12 col-md-6">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+              <h3 class="panel-title">Pastas</h3>
+            </div>
+            <div class="panel-body">
+                <div class="list-group">
+                    <button type="button" class="list-group-item">Spaghetti <span id="saladsPrice">$7.99</span></button>
+                    <button type="button" class="list-group-item">Spaghetti & Meatballs <span id="saladsPrice">$9.99</span></button>
+                    <button type="button" class="list-group-item">Grilled Chicken Alfredo <span id="saladsPrice">$12.99</span></button>
+                    <button type="button" class="list-group-item">Shrimp Alfredo <span id="saladsPrice">$12.99</span></button>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+      <div class="col-xs-12 col-md-6">
+          <div class="panel panel-warning">
+            <div class="panel-heading">
+              <h3 class="panel-title">Bread</h3>
+            </div>
+            <div class="panel-body">
+                <div class="list-group">
+                    <button type="button" class="list-group-item">Garlic Bread <span id="saladsPrice">$3.99</span></button> 
+                    <button type="button" class="list-group-item">Garlic Cheese Bread <span id="saladsPrice">$5.99</span></button>
+                    <button type="button" class="list-group-item">Cheese Bread <span id="saladsPrice">$5.00</span></button>
+                </div>
+            </div>
+          </div>
+        </div> 
+</div> 
+    
+    <div class="container">
+    <div class="list-group">
+        <a class="list-group-item">
+            <h4 class="list-group-item-heading">Caesar</h4>
+            <div class="btn-group" role="group" aria-label="...">
+              <button type="button" class="btn-xs btn-info">Small $6.00</button>
+              <button type="button" class="btn-xs btn-success">Large $9.00</button>
+              <button type="button" class="btn-xs btn-warning" > Add Chicken <span class="glyphicon glyphicon-plus"></span></button>
+            </div>
+            <p>Romaine Lettuve, Parmesan Cheese, Croutons & Caesar Dressing</p>
+            
+        </a>
+        <a class="list-group-item">
+                <h4 class="list-group-item-heading">House</h4>
+                <div class="btn-group" role="group" aria-label="...">
+                  <button type="button" class="btn-xs btn-info">Small $6.00</button>
+                  <button type="button" class="btn-xs btn-success">Large $9.00</button>
+                  <button type="button" class="btn-xs btn-warning" > Add Chicken <span class="glyphicon glyphicon-plus"></span></button>
+                </div>
+            <p>Romaine Lettuce, Black Olives, Cherry Tomatoes, Mushrooms, Red Onions, Red Peppers & Balsamic Vinaigrette</p>
+        </a>
+        <a class="list-group-item">
+            <h4 class="list-group-item-heading">Mediterranean</h4> 
+            <div class="btn-group" role="group" aria-label="...">
+              <button type="button" class="btn-xs btn-info">Small $6.00</button>
+              <button type="button" class="btn-xs btn-success">Large $9.00</button>
+              <button type="button" class="btn-xs btn-warning" > Add Chicken <span class="glyphicon glyphicon-plus"></span></button>
+            </div>
+            <p>Romaine Lettuce, Black Olives, Red Onions, Cucumber, Cherry Tomatoes, Feta Cheese & Balsamic Vinaigrette</p>
+            
+        </a>
+    </div>
+</div>
+
+<div class="container-fluid" id="back">
+    <div class="row">
+        <div class="list-group col-xs-4">
+          <a href="#" class="list-group-item active">Profile</a>
+          <a href="#" class="list-group-item">Orders</a>
+          <a href="#" class="list-group-item">Account</a>
+        </div> 
+        <div class="col-xs-8" id="preText">
+            <pre id="info">
+            </pre>
+        </div>
+    </div> 
+</div>    
+</body>
+
+</html>
